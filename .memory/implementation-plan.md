@@ -58,17 +58,36 @@ Automatische Verifizierung durch strukturierte Protokolle oder System-Auswertung
 ### Schritt 2.1: Klaviatur-HTML-Struktur
 **Ziel**: Erstellen der HTML-Struktur für 8 Klaviertasten
 
+**Spezifikation**:
+- Container: `<div class="piano-container">`
+- Tasten: `<button class="piano-key" data-note="[NOTE]">[NOTE]</button>`
+- Noten: C4, D4, E4, F4, G4, A4, B4, C5
+- HTML-Struktur:
+  ```html
+  <div class="piano-container">
+    <button class="piano-key" data-note="C4">C4</button>
+    <button class="piano-key" data-note="D4">D4</button>
+    <button class="piano-key" data-note="E4">E4</button>
+    <button class="piano-key" data-note="F4">F4</button>
+    <button class="piano-key" data-note="G4">G4</button>
+    <button class="piano-key" data-note="A4">A4</button>
+    <button class="piano-key" data-note="B4">B4</button>
+    <button class="piano-key" data-note="C5">C5</button>
+  </div>
+  ```
+
 **Aktivitäten**:
 - Container für Klaviatur erstellen
-- 8 Tasten-Elemente mit semantischen Namen erstellen
+- 8 Button-Elemente mit data-note Attributen erstellen
 - Tasten mit Note-Bezeichnungen versehen (C4, D4, E4, F4, G4, A4, B4, C5)
 
 **Validierung (HITL)**:
 - Seite im Browser öffnen
 - Visuell überprüfen, dass 8 Tasten sichtbar sind
 - Inspect-Tool verwenden, um HTML-Struktur zu prüfen
+- Überprüfen, dass data-note Attribute korrekt gesetzt sind
 
-**Erfolgskriterium**: 8 Tasten sind im DOM sichtbar und haben korrekte Bezeichnungen
+**Erfolgskriterium**: 8 Tasten sind im DOM sichtbar, haben korrekte Bezeichnungen und data-note Attribute
 
 ---
 
@@ -93,17 +112,29 @@ Automatische Verifizierung durch strukturierte Protokolle oder System-Auswertung
 ### Schritt 2.3: Tasten-Styling
 **Ziel**: Visuelles Styling der Klaviertasten
 
+**Spezifikation**:
+- Tasten-Größe: Breite 60px, Höhe 200px
+- Hintergrundfarbe: Weiß (#FFFFFF)
+- Rand: 2px solid #333333
+- Border-Radius: 4px
+- Text: Zentriert, Font-size 14px, Color #333333
+- Hover-Effekt: Hintergrundfarbe #F0F0F0
+- Active-Zustand: Hintergrundfarbe #E0E0E0
+- Layout: Flexbox, horizontal angeordnet, Abstand 2px zwischen Tasten
+
 **Aktivitäten**:
 - Tasten mit Klavier-ähnlichem Aussehen stylen
 - Hover-Effekte für Tasten implementieren
 - Grundfarben und Border-Radius definieren
+- Flexbox-Layout für Tasten-Anordnung
 
 **Validierung (HITL)**:
 - Seite im Browser öffnen
 - Visuell überprüfen, dass Tasten wie Klaviertasten aussehen
 - Hover-Effekt testen durch Maus-Bewegung
+- Maße mit DevTools überprüfen
 
-**Erfolgskriterium**: Tasten sehen wie Klaviertasten aus und haben Hover-Effekte
+**Erfolgskriterium**: Tasten haben korrekte Maße (60px x 200px), sehen wie Klaviertasten aus und haben Hover-Effekte
 
 ---
 
@@ -182,9 +213,23 @@ Automatische Verifizierung durch strukturierte Protokolle oder System-Auswertung
 ### Schritt 4.2: Tonerzeugung implementieren
 **Ziel**: Implementieren der Tonerzeugung für eine Note
 
+**Spezifikation**:
+- Frequenz-Berechnung: Standard A4 = 440Hz, Formel: f = 440 * 2^((n-69)/12)
+- Noten-Frequenzen (C-Dur-Tonleiter):
+  - C4: 261.63 Hz
+  - D4: 293.66 Hz
+  - E4: 329.63 Hz
+  - F4: 349.23 Hz
+  - G4: 392.00 Hz
+  - A4: 440.00 Hz
+  - B4: 493.88 Hz
+  - C5: 523.25 Hz
+- OscillatorNode-Typ: 'sine' (Sinuswelle)
+- GainNode für Lautstärkekontrolle
+
 **Aktivitäten**:
 - OscillatorNode erstellen
-- Frequenzen für C-Dur-Tonleiter definieren
+- Frequenzen für C-Dur-Tonleiter definieren (obige Werte)
 - GainNode für Lautstärkekontrolle erstellen
 - Ton-Start und Stop-Funktionen implementieren
 
@@ -192,25 +237,38 @@ Automatische Verifizierung durch strukturierte Protokolle oder System-Auswertung
 - Test-Funktion aufrufen, die einen Ton abspielt
 - Manuell überprüfen, dass Ton hörbar ist
 - Console auf Audio-Errors prüfen
+- Frequenzen mit DevTools überprüfen
 
-**Erfolgskriterium**: Ein Ton wird erfolgreich abgespielt und ist hörbar
+**Erfolgskriterium**: Ein Ton wird erfolgreich mit korrekter Frequenz abgespielt und ist hörbar
 
 ---
 
 ### Schritt 4.3: Ton-Dauer und Lautstärke
 **Ziel**: Implementieren von Ton-Dauer und Lautstärkekontrolle
 
+**Spezifikation**:
+- GainNode-Wert: 0.3 (Lautstärke)
+- ADSR-Envelope:
+  - Attack: 0.01s (10ms)
+  - Decay: 0.1s (100ms)
+  - Sustain: 0.7
+  - Release: 0.2s (200ms)
+- Ton-Dauer: Unbegrenzt während Taste gehalten wird
+- Gain-Ramping: exponentiell für saubere Start/Stop-Übergänge
+
 **Aktivitäten**:
 - GainNode für ADSR-Envelope implementieren
-- Ton-Dauer begrenzen
-- Lautstärke auf angenehmen Level setzen
+- Ton-Dauer begrenzen auf Tasten-Haltedauer
+- Lautstärke auf GainNode-Wert 0.3 setzen
+- Exponentielles Ramping für saubere Übergänge
 
 **Validierung (HITL)**:
 - Ton mit verschiedenen Dauern testen
 - Überprüfen, dass Ton sauber startet und stoppt
 - Keine Popping-Geräusche bei Start/Stop
+- Lautstärke als angenehm empfinden
 
-**Erfolgskriterium**: Töne starten und stoppen sauber ohne unerwünschte Geräusche
+**Erfolgskriterium**: Töne starten und stoppen sauber ohne unerwünschte Geräusche, Lautstärke ist angenehm (Gain 0.3)
 
 ---
 
@@ -236,17 +294,32 @@ Automatische Verifizierung durch strukturierte Protokolle oder System-Auswertung
 ### Schritt 5.2: Tastatur-Event-Listener
 **Ziel**: Implementieren von Tastatur-Event-Handlern
 
+**Spezifikation**:
+- Tastatur-Zuordnung (QWERTZ/QWERTY kompatibel):
+  - Taste A → Note C4
+  - Taste S → Note D4
+  - Taste D → Note E4
+  - Taste F → Note F4
+  - Taste G → Note G4
+  - Taste H → Note A4
+  - Taste J → Note B4
+  - Taste K → Note C5
+- Event-Typen: keydown und keyup
+- Key-Code-Prüfung: event.key.toLowerCase()
+
 **Aktivitäten**:
 - keydown-Event-Listener erstellen
 - keyup-Event-Listener erstellen
-- Tasten-Zuordnung (A-K zu den 8 Noten) implementieren
+- Tasten-Zuordnung (A,S,D,F,G,H,J,K zu den 8 Noten) implementieren
+- Key-Code-Prüfung implementieren
 
 **Validierung (HITL)**:
 - Seite im Browser öffnen
-- Tasten A-K drücken und Ton prüfen
+- Tasten A,S,D,F,G,H,J,K drücken und Ton prüfen
 - Console auf Key-Event-Logs prüfen
+- Überprüfen, dass jede Taste die korrekte Note auslöst
 
-**Erfolgskriterium**: Tastatur-Tasten A-K lösen korrekte Töne aus
+**Erfolgskriterium**: Tastatur-Tasten A,S,D,F,G,H,J,K lösen korrekte Töne C4,C5 aus
 
 ---
 
@@ -272,34 +345,58 @@ Automatische Verifizierung durch strukturierte Protokolle oder System-Auswertung
 ### Schritt 6.1: Visuelles Feedback System
 **Ziel**: Implementieren von visuellem Feedback bei Tastendruck
 
+**Spezifikation**:
+- Farb-Zuordnung zu Noten (Hex-Codes):
+  - C4: #FF6B6B (Rot)
+  - D4: #FFA500 (Orange)
+  - E4: #FFD700 (Gold)
+  - F4: #4CAF50 (Grün)
+  - G4: #00CED1 (Türkis)
+  - A4: #2196F3 (Blau)
+  - B4: #9C27B0 (Lila)
+  - C5: #E91E63 (Pink)
+- Hintergrund-Farbwechsel: body background-color wird zur Note-Farbe geändert
+- Aktive Tasten: CSS-Klasse .active mit Hintergrundfarbe der Note
+- Farb-Transition: Keine Transition für sofortiges Feedback
+
 **Aktivitäten**:
 - Hintergrund-Farbwechsel-System erstellen
-- Farb-Zuordnung zu Noten implementieren
-- CSS-Klassen für aktive Tasten erstellen
+- Farb-Zuordnung zu Noten implementieren (obige Hex-Codes)
+- CSS-Klassen für aktive Tasten erstellen (.active)
 
 **Validierung (HITL)**:
 - Taste drücken und visuelles Feedback prüfen
-- Überprüfen, dass Hintergrundfarbe sich ändert
-- Überprüfen, dass Taste visuell aktiv wird
+- Überprüfen, dass Hintergrundfarbe sich zur korrekten Note-Farbe ändert
+- Überprüfen, dass Taste visuell aktiv wird mit Note-Farbe
+- Alle 8 Farben testen
 
-**Erfolgskriterium**: Tastendruck erzeugt sichtbares visuelles Feedback
+**Erfolgskriterium**: Tastendruck erzeugt sichtbares visuelles Feedback mit korrekten Farben pro Note
 
 ---
 
 ### Schritt 6.2: Nachleucht-Effekt
 **Ziel**: Implementieren von Nachleucht-Effekt nach Tastenfreigabe
 
+**Spezifikation**:
+- Nachleucht-Dauer: 300ms
+- CSS-Transition: background-color 300ms ease-out
+- Hintergrund-Nachleuchten: body background-color mit 300ms zurück zu original
+- Tasten-Nachleuchten: .active Klasse mit 300ms entfernt
+- Original-Hintergrundfarbe: #000000 (Schwarz)
+
 **Aktivitäten**:
-- Timer für Nachleucht-Effekt erstellen
-- CSS-Transition für sanftes Ausblenden
-- Zeitsteuerung für Effekt-Dauer
+- Timer für Nachleucht-Effekt erstellen (300ms)
+- CSS-Transition für sanftes Ausblenden implementieren
+- Zeitsteuerung für Effekt-Dauer (300ms)
+- Original-Hintergrundfarbe auf Schwarz setzen
 
 **Validierung (HITL)**:
 - Taste drücken und loslassen
-- Überprüfen, dass Effekt sanft ausblendet
-- Zeitdauer des Effekts prüfen
+- Überprüfen, dass Effekt sanft über 300ms ausblendet
+- Zeitdauer des Effekts mit Stopwatch prüfen
+- Überprüfen, dass Hintergrund zu Schwarz zurückkehrt
 
-**Erfolgskriterium**: Visuelles Feedback blendet sanft nach Tastenfreigabe aus
+**Erfolgskriterium**: Visuelles Feedback blendet sanft über 300ms nach Tastenfreigabe aus, Hintergrund kehrt zu Schwarz zurück
 
 ---
 
@@ -378,17 +475,29 @@ Automatische Verifizierung durch strukturierte Protokolle oder System-Auswertung
 ### Schritt 8.3: Performance-Logging
 **Ziel**: Implementieren von Performance-Logging für kritische Operationen
 
+**Spezifikation**:
+- Performance-Grenzwerte:
+  - Audio-Operationen: <5ms Latenz
+  - Event-Handling: <16ms (60fps Target)
+  - Rendering-Updates: <16ms (60fps Target)
+  - State-Transitions: <1ms
+- Performance-Marker: performance.now() für Zeitmessung
+- Logging-Intervall: Alle kritischen Operationen loggen
+- Warn-Level: Bei Überschreitung der Grenzwerte
+
 **Aktivitäten**:
 - Performance-Marker für Audio-Operationen erstellen
-- Event-Handling-Latenz messen
+- Event-Handling-Latenz messen mit performance.now()
 - Rendering-Performance überwachen
+- Grenzwert-Prüfung implementieren
 
 **Validierung (KIF)**:
 - Schnelle Aktionen auslösen
 - Console-Logs auf Performance-Daten prüfen
-- Überprüfen, dass Latenzen im akzeptablen Bereich sind
+- Überprüfen, dass Latenzen unter den Grenzwerten liegen
+- Performance-Warnungen bei Überschreitung prüfen
 
-**Erfolgskriterium**: Performance-Metriken werden geloggt und sind innerhalb akzeptabler Grenzen
+**Erfolgskriterium**: Performance-Metriken werden geloggt, alle Werte liegen unter den definierten Grenzwerten (<5ms Audio, <16ms Events/Rendering)
 
 ---
 
